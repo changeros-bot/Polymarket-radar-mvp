@@ -2,7 +2,7 @@
 
 Polymarket Radar MVP is a mobile-first system for finding high-performing Polymarket traders, tracking their wallets, and simulating copy-trading results with virtual capital before any real-money execution is considered.
 
-The current MVP is **wallet radar plus paper trading only**. It must not request private keys, submit real CLOB orders, redeem positions, or move funds.
+The current MVP is **trader radar plus paper trading only**. It must not request private keys, submit real CLOB orders, redeem positions, or move funds.
 
 ## Project Purpose
 
@@ -13,6 +13,62 @@ The first question this project must answer is:
 > If I copy this Polymarket trader with simulated money, does the strategy still perform well after delay, sizing limits, and drawdown?
 
 This is not meant to blindly copy any popular wallet. The system should filter for traders who are profitable, consistent, and worth studying.
+
+## Current Status
+
+Current implementation status:
+
+- GitHub repository created.
+- Documentation baseline created.
+- Safety policy created.
+- Upstream repository review completed.
+- Clean TypeScript API scaffold created.
+- Mock trader wallet data created.
+- Mock recent trades created.
+- Paper-trading simulation scaffold created.
+- Express API endpoints created.
+- Static dashboard bootstrap started.
+
+Current phase:
+
+```text
+Sprint 1: Mobile Dashboard MVP
+```
+
+Current execution mode:
+
+```text
+Paper trading / preview mode only
+```
+
+Real trading status:
+
+```text
+Disabled until later explicit approval
+```
+
+## Current Features
+
+Available API endpoints:
+
+```text
+GET /health
+GET /api/traders
+GET /api/trades/recent
+GET /api/paper/summary
+```
+
+Current data source:
+
+```text
+Mock trader and mock trade data
+```
+
+Current simulator:
+
+```text
+Deterministic mock paper-trading PnL scaffold
+```
 
 ## Core Workflow
 
@@ -28,96 +84,92 @@ This is not meant to blindly copy any popular wallet. The system should filter f
 
 ### Phase 1: Trader Radar
 
-- Track selected Polymarket trader wallets
-- Display wallet analytics
-- Show recent bets and activity
-- Rank traders by ROI, win rate, realized profit, drawdown, and consistency
-- Send Telegram alerts when a tracked wallet places a new bet
-- No private key
-- No real order
+- Track selected Polymarket trader wallets.
+- Display wallet analytics.
+- Show recent bets and activity.
+- Rank traders by ROI, win rate, realized profit, drawdown, and consistency.
+- Send Telegram alerts when a tracked wallet places a new bet.
+- No private key.
+- No real order.
 
 ### Phase 2: Paper Trading
 
-- Simulate copy-trading with virtual capital
-- Default settings:
-  - `PREVIEW_MODE=true`
-  - `COPY_SIZE=1`
-  - `MAX_ORDER_SIZE_USD=2`
-- Track simulated entry, exit, PnL, win rate, and drawdown
-- Include estimated delay and slippage assumptions
-- Run for at least 14 days before any real trading discussion
+- Simulate copy-trading with virtual capital.
+- Track simulated entry, exit, PnL, win rate, and drawdown.
+- Include estimated delay and slippage assumptions.
+- Run for at least 14–30 days before any real trading discussion.
+
+Default settings:
+
+```env
+PREVIEW_MODE=true
+COPY_SIZE=1
+MAX_ORDER_SIZE_USD=2
+PAPER_STARTING_BALANCE_USD=100
+PAPER_TRADING_DAYS=14
+```
 
 ### Phase 3: Shadow Trading
 
-- Connect exchange or trading API in read-only / no-execution mode
-- Read balances, positions, and market data if needed
-- Generate intended orders but do not submit them
-- Continue Telegram alerts and risk checks
+- Connect exchange or trading API in read-only / no-execution mode.
+- Read balances, positions, and market data if needed.
+- Generate intended orders but do not submit them.
+- Continue Telegram alerts and risk checks.
 
 ### Phase 4: Small Live Copy Trading
 
-- Enable real trading only after explicit approval
-- Start with very small size
-- Require kill switch, max daily loss, max order size, wallet whitelist, and market blacklist
-- Keep full logs for every decision and order
-
-## Current Features
-
-Current repository status:
-
-- Repository initialized
-- GitHub write access verified
-- Product direction defined
-- Trader radar and paper-trading roadmap defined
-- Safety-first staged roadmap defined
-
-Planned MVP features:
-
-- Mobile-friendly dashboard
-- Track selected Polymarket trader wallets
-- Display ROI, win rate, recent bets, trade frequency, maximum drawdown, and realized profit
-- Simulate copy-trading PnL with virtual capital
-- Send Telegram alerts when a tracked wallet places a new bet
-- Store wallet activity and simulation logs
-
-## Explicitly Disabled in Phase 1 and Phase 2
-
-- No private key input
-- No real order submission
-- No auto trading
-- No redeem flow
-- No manual sell flow
-- No allowance approval scripts
-- No real-money execution path
+- Enable real trading only after explicit approval.
+- Start with very small size.
+- Require kill switch, max daily loss, max order size, wallet whitelist, and market blacklist.
+- Keep full logs for every decision and order.
 
 ## Startup Method
 
-This repository is currently in documentation/bootstrap phase. Source code has not yet been imported.
-
-After the application code is added, the expected local startup flow will be:
+Current local startup flow:
 
 ```bash
 npm install
 npm run dev
 ```
 
-The final command may change after the source repo is imported.
+Build and start:
+
+```bash
+npm run build
+npm start
+```
+
+Type check:
+
+```bash
+npm run typecheck
+```
 
 ## Deployment Method
 
-Target cloud deployment:
+Preferred MVP deployment path:
 
-1. GitHub repository
-2. Railway or Render web service
-3. MongoDB Atlas database
-4. Telegram Bot for alerts
-5. Mobile browser dashboard
+```text
+GitHub -> Vercel -> Mobile Dashboard
+```
 
-The MVP should deploy without any wallet private key or real trading credential.
+Planned supporting services:
+
+```text
+MongoDB Atlas -> persistence
+Telegram Bot -> alerts
+Railway or another worker platform -> optional future background scanner
+```
+
+Deployment direction:
+
+- Use Vercel for the mobile dashboard and API where possible.
+- Use MongoDB Atlas for trader registry, trade history, paper trades, alerts, and decision logs.
+- Add a separate worker only when continuous background scanning is needed.
 
 ## Environment Variables
 
-Required for MVP:
+Required for Phase 1 and Phase 2:
 
 ```env
 PREVIEW_MODE=true
@@ -137,37 +189,63 @@ PRIVATE_KEY=
 PROXY_WALLET=
 ```
 
-If later source code includes these variables, they must remain optional, unused, and blocked while `PREVIEW_MODE=true`.
+If `PRIVATE_KEY` or `PROXY_WALLET` is set during Phase 1 or Phase 2, the app should refuse to start.
+
+## Important Files
+
+```text
+README.md                  Project overview and startup guide
+AI_CONTEXT.md              AI handoff context and coding rules
+SAFETY.md                  Safety policy and phase gates
+ROADMAP.md                 Product milestones
+PROJECT_STATUS.md          Current project status
+docs/PROGRESS.md           Daily progress and handoff log
+docs/UPSTREAM_REVIEW.md    Review of upstream copy-trading repo
+docs/ARCHITECTURE.md       Architecture truth source
+docs/DECISIONS.md          Major design decisions
+docs/CHANGELOG.md          Version history
+src/server.ts              Current Express API scaffold
+src/config/env.ts          Environment parsing and safety guard
+src/data/mockWallets.ts    Mock trader and trade data
+src/simulation/paperTrading.ts Paper-trading simulator scaffold
+```
 
 ## Known Issues
 
-- Source code has not yet been imported.
-- No dashboard exists yet in this repo.
-- No wallet ingestion pipeline exists yet in this repo.
-- No simulation engine exists yet in this repo.
-- No deployment configuration exists yet.
-- Need to review the upstream copy-trading repo before importing or adapting any code.
+- Static dashboard is not complete yet.
+- Next.js / Vercel migration has not been completed yet.
+- Real Polymarket wallet ingestion does not exist yet.
+- MongoDB persistence is not wired yet.
+- Telegram alerts are not wired yet.
+- Paper-trading simulator currently uses mock PnL, not real settlement or mark-to-market data.
+- No production deployment URL exists yet.
 
 ## Next Steps
 
-1. Add `SAFETY.md` to define the no-real-trading boundary and future phase gates.
-2. Add `.env.example` with safe defaults.
-3. Add `ROADMAP.md` with the four-phase roadmap.
-4. Review upstream repository `shmlkv/polymarket-copy-trading-bot`.
-5. Decide whether to import selected upstream code or build a minimal clean MVP.
-6. Build the first read-only trader wallet tracker.
-7. Build paper-trading simulation logs.
-8. Add Telegram alerts.
-9. Deploy the dashboard to Railway or Render.
+1. Finish the mobile dashboard or migrate to Next.js for Vercel deployment.
+2. Deploy the first mobile-readable version to Vercel.
+3. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
+4. Add MongoDB Atlas persistence.
+5. Add Telegram alerts.
+6. Add real paper-trading records and daily reports.
+7. Add Trader Registry, Radar Score, and Discovery Engine.
 
 ## Decision Gate
 
 Small live copy trading can only be discussed after:
 
-- 14–30 days of paper-trading results
-- Positive simulated performance
-- Acceptable maximum drawdown
-- No low-quality chase trades
-- Acceptable tracking delay
-- Clear wallet whitelist
-- Explicit user approval
+- 14–30 days of paper-trading results.
+- Positive simulated performance.
+- Acceptable maximum drawdown.
+- No low-quality chase trades.
+- Acceptable tracking delay.
+- Clear wallet whitelist.
+- Explicit user approval.
+
+## Development Rule
+
+Every development cycle should follow this order:
+
+```text
+Plan -> Modify -> Commit -> Update Progress -> Summarize Impact -> Define Next Step
+```
