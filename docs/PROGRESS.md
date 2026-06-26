@@ -14,12 +14,14 @@ This document records project progress, decisions, blockers, and handoff notes f
 - Established a staged roadmap from radar to paper trading, shadow trading, and eventually small live copy trading.
 - Added safety policy and safe environment-variable template.
 - Reviewed upstream repository `shmlkv/polymarket-copy-trading-bot` and decided not to import it wholesale because it contains live trading paths.
-- Added a clean TypeScript API scaffold for the MVP.
+- Added a clean TypeScript API scaffold for local development.
 - Added mock trader wallet data and recent mock trades.
 - Added a paper-trading simulation engine scaffold.
 - Added API endpoints for health, traders, recent trades, and paper-trading summary.
 - Started a static mobile dashboard bootstrap with `public/index.html`.
 - Completed static mobile dashboard assets with `public/styles.css` and `public/app.js`.
+- Added Vercel-compatible serverless API endpoints under `api/`.
+- Added `vercel.json` for static dashboard routing.
 - Added AI handoff documentation package:
   - `AI_CONTEXT.md`
   - `docs/ARCHITECTURE.md`
@@ -29,80 +31,9 @@ This document records project progress, decisions, blockers, and handoff notes f
 ### Important Files Changed
 
 - `README.md`
-  - Updated project purpose.
-  - Added current status.
-  - Added current API endpoints.
-  - Added startup, deployment, environment variables, known issues, and next steps.
+  - Updated project purpose, current status, endpoints, startup, deployment, environment variables, known issues, and next steps.
   - Clarified Vercel-first deployment direction.
-
-- `PROJECT_STATUS.md`
-  - Added initial repository status.
-  - Marked the project as repository-ready and waiting for source-code import / MVP implementation.
-
-- `AI_CONTEXT.md`
-  - Added AI handoff context.
-  - Added current sprint, coding rules, safety boundaries, and next best step.
-
-- `docs/ARCHITECTURE.md`
-  - Added architecture source of truth.
-  - Documented current architecture, target MVP architecture, and future architecture.
-  - Documented module boundaries and safety principles.
-
-- `docs/DECISIONS.md`
-  - Added major design decisions.
-  - Recorded radar-first, upstream-reference-only, Vercel-first, private-key-blocking, and execution-isolated decisions.
-
-- `docs/CHANGELOG.md`
-  - Added first project changelog entry.
-  - Listed bootstrap features, safety guard, and known gaps.
-
-- `docs/PROGRESS.md`
-  - Updated this handoff log.
-
-- `docs/UPSTREAM_REVIEW.md`
-  - Documented useful upstream modules.
-  - Documented dangerous upstream execution paths.
-  - Recommended clean MVP build instead of wholesale import.
-
-- `SAFETY.md`
-  - Added phase gates.
-  - Added no-private-key and no-real-order safety rules for Phase 1 and Phase 2.
-  - Added requirements for future small live copy trading.
-
-- `.env.example`
-  - Added safe paper-trading defaults.
-  - Commented out private-key-related variables.
-
-- `ROADMAP.md`
-  - Added phased roadmap from trader radar to small live copy trading.
-
-- `package.json`
-  - Added TypeScript API project scripts.
-  - Added Express, CORS, dotenv dependencies.
-
-- `tsconfig.json`
-  - Added TypeScript compiler configuration.
-
-- `src/config/env.ts`
-  - Added safe environment parsing.
-  - Added startup guard that blocks Phase 1 and Phase 2 if `PREVIEW_MODE=false`, `PRIVATE_KEY`, or `PROXY_WALLET` is set.
-
-- `src/types/index.ts`
-  - Added core trader, market trade, paper trade, and summary types.
-
-- `src/data/mockWallets.ts`
-  - Added mock watchlist, metrics, and recent trades for dashboard/API development.
-
-- `src/simulation/paperTrading.ts`
-  - Added first paper-trading simulator scaffold.
-
-- `src/server.ts`
-  - Added safe API server with endpoints:
-    - `GET /health`
-    - `GET /api/traders`
-    - `GET /api/trades/recent`
-    - `GET /api/paper/summary`
-  - Updated Express to serve static dashboard files from `public/`.
+  - Documented Vercel serverless API structure.
 
 - `public/index.html`
   - Added mobile dashboard HTML shell.
@@ -111,33 +42,57 @@ This document records project progress, decisions, blockers, and handoff notes f
   - Added mobile-first dashboard styling.
 
 - `public/app.js`
-  - Wired dashboard cards to the existing API endpoints.
+  - Wired dashboard cards to API endpoints.
   - Added mock Radar Score calculation for display.
+
+- `api/_mockData.js`
+  - Added shared mock data and paper-trading calculation for Vercel serverless endpoints.
+
+- `api/health.js`
+  - Added Vercel health endpoint.
+
+- `api/traders.js`
+  - Added Vercel traders endpoint.
+
+- `api/trades/recent.js`
+  - Added Vercel recent trades endpoint.
+
+- `api/paper/summary.js`
+  - Added Vercel paper-trading summary endpoint.
+
+- `vercel.json`
+  - Added routing for the static dashboard.
+
+- `src/server.ts`
+  - Still available as a local Express development scaffold.
+
+- `docs/PROGRESS.md`
+  - Updated this handoff log.
 
 ### Decisions Made
 
-- The project will be separated from `discount-hunter`.
+- The project will remain separated from `discount-hunter`.
 - The user eventually wants real automated copy trading, but only after simulated-money validation.
-- The first usable version will focus on finding and tracking strong Polymarket traders.
-- The first trading-like behavior will be paper trading with virtual capital.
+- The first usable version focuses on finding and tracking strong Polymarket traders.
+- The first trading-like behavior is paper trading with virtual capital.
 - The paper-trading window should run for 14–30 days before any live mode discussion.
 - `PREVIEW_MODE=true` is mandatory during Phase 1 and Phase 2.
 - Phase 1 and Phase 2 must not require `PRIVATE_KEY`.
 - Phase 1 and Phase 2 must not submit real Polymarket CLOB orders.
 - The upstream repo should be treated as a reference source, not copied wholesale.
-- The clean MVP will start from mock data and safe APIs, then progressively replace mock data with real read-only Polymarket data.
+- The clean MVP starts from mock data and safe APIs, then progressively replaces mock data with real read-only Polymarket data.
 - Vercel is preferred for the dashboard because the user's existing Discount Hunter project already uses Vercel.
+- For first mobile deployment, static `public/` assets plus Vercel serverless functions are preferred over a long-running Express service.
 - A separate worker platform can be added later for continuous wallet scanning.
 - Telegram will be used for new-wallet-activity alerts.
 - Future live execution must remain isolated behind phase gates.
 
 ### Current Blockers
 
-- The current dashboard has not been locally typechecked or runtime tested yet.
+- Vercel deployment has not been manually verified yet.
 - Real Polymarket wallet ingestion does not exist yet.
 - MongoDB persistence is not wired yet.
 - Telegram alerts are not wired yet.
-- Deployment files / Vercel setup are not complete yet.
 - Paper-trading simulator currently uses deterministic mock PnL, not real settlement or mark-to-market data.
 
 ### Next Handoff: Read This First
@@ -151,23 +106,24 @@ This document records project progress, decisions, blockers, and handoff notes f
 7. `ROADMAP.md` for implementation order.
 8. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
 9. `.env.example` for safe default settings.
-10. `src/server.ts` for available API endpoints.
-11. `src/config/env.ts` for startup safety checks.
-12. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
-13. `docs/PROGRESS.md` for project history and next actions.
+10. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
+11. `api/_mockData.js` and `api/*` for Vercel serverless endpoints.
+12. `src/server.ts` for local Express development.
+13. `src/config/env.ts` for startup safety checks.
+14. `docs/PROGRESS.md` for project history and next actions.
 
 ### Recommended Next Steps
 
-1. Run `npm install` and `npm run typecheck` once a development environment is available.
-2. Launch local server with `npm run dev`.
-3. Deploy first preview to Vercel.
+1. Connect the repository to Vercel.
+2. Deploy the first preview.
+3. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
 4. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
 5. Add MongoDB persistence.
 6. Add Telegram alerts.
 
 ### Current Status
 
-Phase: Sprint 1 mobile dashboard bootstrap
+Phase: Sprint 1 Vercel preview preparation
 
 Execution mode: Paper trading scaffold with mock data
 
