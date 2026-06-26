@@ -8,7 +8,7 @@ This document records project progress, decisions, blockers, and handoff notes f
 
 - Created the repository `changeros-bot/Polymarket-radar-mvp`.
 - Verified GitHub write access from ChatGPT by creating `PROJECT_STATUS.md`.
-- Updated `README.md` with the initial project baseline.
+- Updated `README.md` with the project baseline and later refreshed it for AI handoff.
 - Clarified the core mission: find high-win-rate and high-profit Polymarket traders, track their wallets, and simulate copying them before any real trading.
 - Defined the project as **Polymarket Radar MVP**, starting with trader radar and paper trading.
 - Established a staged roadmap from radar to paper trading, shadow trading, and eventually small live copy trading.
@@ -18,23 +18,45 @@ This document records project progress, decisions, blockers, and handoff notes f
 - Added mock trader wallet data and recent mock trades.
 - Added a paper-trading simulation engine scaffold.
 - Added API endpoints for health, traders, recent trades, and paper-trading summary.
+- Started a static mobile dashboard bootstrap with `public/index.html`.
+- Added AI handoff documentation package:
+  - `AI_CONTEXT.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/CHANGELOG.md`
 
 ### Important Files Changed
 
 - `README.md`
-  - Added project purpose.
-  - Added trader radar and paper-trading workflow.
-  - Added four product phases.
-  - Added startup and deployment direction.
-  - Added required and forbidden environment variables.
-  - Added known issues and next steps.
+  - Updated project purpose.
+  - Added current status.
+  - Added current API endpoints.
+  - Added startup, deployment, environment variables, known issues, and next steps.
+  - Clarified Vercel-first deployment direction.
 
 - `PROJECT_STATUS.md`
   - Added initial repository status.
-  - Marked the project as repository-ready and waiting for source-code import.
+  - Marked the project as repository-ready and waiting for source-code import / MVP implementation.
+
+- `AI_CONTEXT.md`
+  - Added AI handoff context.
+  - Added current sprint, coding rules, safety boundaries, and next best step.
+
+- `docs/ARCHITECTURE.md`
+  - Added architecture source of truth.
+  - Documented current architecture, target MVP architecture, and future architecture.
+  - Documented module boundaries and safety principles.
+
+- `docs/DECISIONS.md`
+  - Added major design decisions.
+  - Recorded radar-first, upstream-reference-only, Vercel-first, private-key-blocking, and execution-isolated decisions.
+
+- `docs/CHANGELOG.md`
+  - Added first project changelog entry.
+  - Listed bootstrap features, safety guard, and known gaps.
 
 - `docs/PROGRESS.md`
-  - Added and updated this handoff log.
+  - Updated this handoff log.
 
 - `docs/UPSTREAM_REVIEW.md`
   - Documented useful upstream modules.
@@ -79,6 +101,10 @@ This document records project progress, decisions, blockers, and handoff notes f
     - `GET /api/traders`
     - `GET /api/trades/recent`
     - `GET /api/paper/summary`
+  - Updated Express to serve static dashboard files from `public/`.
+
+- `public/index.html`
+  - Added mobile dashboard HTML shell.
 
 ### Decisions Made
 
@@ -92,42 +118,51 @@ This document records project progress, decisions, blockers, and handoff notes f
 - Phase 1 and Phase 2 must not submit real Polymarket CLOB orders.
 - The upstream repo should be treated as a reference source, not copied wholesale.
 - The clean MVP will start from mock data and safe APIs, then progressively replace mock data with real read-only Polymarket data.
-- The MVP should be mobile-first because the user mainly operates from a phone.
-- Railway or Render plus MongoDB Atlas is the preferred deployment path.
+- Vercel is preferred for the dashboard because the user's existing Discount Hunter project already uses Vercel.
+- A separate worker platform can be added later for continuous wallet scanning.
 - Telegram will be used for new-wallet-activity alerts.
+- Future live execution must remain isolated behind phase gates.
 
 ### Current Blockers
 
-- Dashboard implementation does not exist yet.
+- `public/styles.css` has not been added yet.
+- `public/app.js` has not been added yet.
+- Dashboard is not visually usable yet.
 - Real Polymarket wallet ingestion does not exist yet.
 - MongoDB persistence is not wired yet.
 - Telegram alerts are not wired yet.
-- Deployment files do not exist yet.
+- Deployment files / Vercel setup are not complete yet.
 - Paper-trading simulator currently uses deterministic mock PnL, not real settlement or mark-to-market data.
 
 ### Next Handoff: Read This First
 
-1. `README.md` for product direction and phase roadmap.
-2. `SAFETY.md` for safety boundaries and phase gates.
-3. `ROADMAP.md` for implementation order.
-4. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
-5. `.env.example` for safe default settings.
-6. `src/server.ts` for available API endpoints.
-7. `src/config/env.ts` for startup safety checks.
-8. `docs/PROGRESS.md` for project history and next actions.
+1. `AI_CONTEXT.md` for AI-specific instructions and current sprint.
+2. `README.md` for project direction and startup guide.
+3. `SAFETY.md` for safety boundaries and phase gates.
+4. `docs/ARCHITECTURE.md` for architecture source of truth.
+5. `docs/DECISIONS.md` for design decisions.
+6. `docs/CHANGELOG.md` for version history.
+7. `ROADMAP.md` for implementation order.
+8. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
+9. `.env.example` for safe default settings.
+10. `src/server.ts` for available API endpoints.
+11. `src/config/env.ts` for startup safety checks.
+12. `docs/PROGRESS.md` for project history and next actions.
 
 ### Recommended Next Steps
 
-1. Run `npm install` and `npm run typecheck` once a development environment is available.
-2. Add a simple mobile-first web dashboard.
-3. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
-4. Add MongoDB persistence.
-5. Add Telegram alerts.
-6. Deploy the API and dashboard to Railway or Render.
+1. Add `public/styles.css`.
+2. Add `public/app.js`.
+3. Run `npm install` and `npm run typecheck` once a development environment is available.
+4. Launch local server with `npm run dev`.
+5. Deploy first preview to Vercel.
+6. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
+7. Add MongoDB persistence.
+8. Add Telegram alerts.
 
 ### Current Status
 
-Phase: API scaffold created
+Phase: Sprint 1 mobile dashboard bootstrap
 
 Execution mode: Paper trading scaffold with mock data
 
