@@ -26,13 +26,14 @@ Current implementation status:
 - Mock trader wallet data created.
 - Mock recent trades created.
 - Paper-trading simulation scaffold created.
-- Express API endpoints created.
-- Static dashboard bootstrap started.
+- Static mobile dashboard completed for Sprint 1 bootstrap.
+- Vercel-compatible serverless API endpoints added under `api/`.
+- Vercel routing configuration added.
 
 Current phase:
 
 ```text
-Sprint 1: Mobile Dashboard MVP
+Sprint 1: Mobile Dashboard MVP -> Vercel preview deployment
 ```
 
 Current execution mode:
@@ -49,10 +50,11 @@ Disabled until later explicit approval
 
 ## Current Features
 
-Available API endpoints:
+Available dashboard/API endpoints:
 
 ```text
-GET /health
+GET /
+GET /api/health
 GET /api/traders
 GET /api/trades/recent
 GET /api/paper/summary
@@ -125,7 +127,7 @@ PAPER_TRADING_DAYS=14
 
 ## Startup Method
 
-Current local startup flow:
+Local Express/TypeScript development flow:
 
 ```bash
 npm install
@@ -151,6 +153,14 @@ Preferred MVP deployment path:
 
 ```text
 GitHub -> Vercel -> Mobile Dashboard
+```
+
+The current Vercel deployment uses:
+
+```text
+public/             static dashboard
+api/*.js            Vercel serverless API endpoints
+vercel.json         routing config
 ```
 
 Planned supporting services:
@@ -204,7 +214,15 @@ docs/UPSTREAM_REVIEW.md    Review of upstream copy-trading repo
 docs/ARCHITECTURE.md       Architecture truth source
 docs/DECISIONS.md          Major design decisions
 docs/CHANGELOG.md          Version history
-src/server.ts              Current Express API scaffold
+public/index.html          Static mobile dashboard shell
+public/styles.css          Mobile-first dashboard styles
+public/app.js              Dashboard API client
+api/_mockData.js           Shared mock data for Vercel APIs
+api/health.js              Vercel health endpoint
+api/traders.js             Vercel traders endpoint
+api/trades/recent.js       Vercel recent trades endpoint
+api/paper/summary.js       Vercel paper trading endpoint
+src/server.ts              Local Express API scaffold
 src/config/env.ts          Environment parsing and safety guard
 src/data/mockWallets.ts    Mock trader and trade data
 src/simulation/paperTrading.ts Paper-trading simulator scaffold
@@ -212,8 +230,7 @@ src/simulation/paperTrading.ts Paper-trading simulator scaffold
 
 ## Known Issues
 
-- Static dashboard is not complete yet.
-- Next.js / Vercel migration has not been completed yet.
+- Vercel deployment has not yet been manually verified.
 - Real Polymarket wallet ingestion does not exist yet.
 - MongoDB persistence is not wired yet.
 - Telegram alerts are not wired yet.
@@ -222,8 +239,8 @@ src/simulation/paperTrading.ts Paper-trading simulator scaffold
 
 ## Next Steps
 
-1. Finish the mobile dashboard or migrate to Next.js for Vercel deployment.
-2. Deploy the first mobile-readable version to Vercel.
+1. Connect this repository to Vercel and deploy the first mobile-readable preview.
+2. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
 3. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
 4. Add MongoDB Atlas persistence.
 5. Add Telegram alerts.
