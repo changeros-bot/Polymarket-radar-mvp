@@ -19,6 +19,7 @@ This document records project progress, decisions, blockers, and handoff notes f
 - Added a paper-trading simulation engine scaffold.
 - Added API endpoints for health, traders, recent trades, and paper-trading summary.
 - Started a static mobile dashboard bootstrap with `public/index.html`.
+- Completed static mobile dashboard assets with `public/styles.css` and `public/app.js`.
 - Added AI handoff documentation package:
   - `AI_CONTEXT.md`
   - `docs/ARCHITECTURE.md`
@@ -106,6 +107,13 @@ This document records project progress, decisions, blockers, and handoff notes f
 - `public/index.html`
   - Added mobile dashboard HTML shell.
 
+- `public/styles.css`
+  - Added mobile-first dashboard styling.
+
+- `public/app.js`
+  - Wired dashboard cards to the existing API endpoints.
+  - Added mock Radar Score calculation for display.
+
 ### Decisions Made
 
 - The project will be separated from `discount-hunter`.
@@ -125,9 +133,7 @@ This document records project progress, decisions, blockers, and handoff notes f
 
 ### Current Blockers
 
-- `public/styles.css` has not been added yet.
-- `public/app.js` has not been added yet.
-- Dashboard is not visually usable yet.
+- The current dashboard has not been locally typechecked or runtime tested yet.
 - Real Polymarket wallet ingestion does not exist yet.
 - MongoDB persistence is not wired yet.
 - Telegram alerts are not wired yet.
@@ -147,18 +153,17 @@ This document records project progress, decisions, blockers, and handoff notes f
 9. `.env.example` for safe default settings.
 10. `src/server.ts` for available API endpoints.
 11. `src/config/env.ts` for startup safety checks.
-12. `docs/PROGRESS.md` for project history and next actions.
+12. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
+13. `docs/PROGRESS.md` for project history and next actions.
 
 ### Recommended Next Steps
 
-1. Add `public/styles.css`.
-2. Add `public/app.js`.
-3. Run `npm install` and `npm run typecheck` once a development environment is available.
-4. Launch local server with `npm run dev`.
-5. Deploy first preview to Vercel.
-6. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
-7. Add MongoDB persistence.
-8. Add Telegram alerts.
+1. Run `npm install` and `npm run typecheck` once a development environment is available.
+2. Launch local server with `npm run dev`.
+3. Deploy first preview to Vercel.
+4. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
+5. Add MongoDB persistence.
+6. Add Telegram alerts.
 
 ### Current Status
 
