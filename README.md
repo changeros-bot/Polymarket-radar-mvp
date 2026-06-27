@@ -33,7 +33,7 @@ Current implementation status:
 Current phase:
 
 ```text
-Sprint 1: Mobile Dashboard MVP -> Vercel preview deployment
+Sprint 2: Deploy first Vercel preview
 ```
 
 Current execution mode:
@@ -81,6 +81,35 @@ Deterministic mock paper-trading PnL scaffold
 5. Run paper trading for 14–30 days.
 6. Review simulated ROI, maximum drawdown, latency, and trade quality.
 7. Only after passing the review gate, discuss small-size live copy trading.
+
+## MVP Deployment From Mobile
+
+Use this when deploying from an Android phone.
+
+1. Open Vercel.
+2. Tap **Add New Project**.
+3. Import this GitHub repository:
+
+```text
+changeros-bot/Polymarket-radar-mvp
+```
+
+4. Keep the root directory as the repository root.
+5. No environment variables are required for the first mock preview.
+6. Tap **Deploy**.
+7. After deployment, open the generated `.vercel.app` URL on mobile.
+
+Verify these routes:
+
+```text
+/
+/api/health
+/api/traders
+/api/trades/recent
+/api/paper/summary
+```
+
+The first successful deployment only needs to prove that the dashboard and mock APIs load.
 
 ## Product Phases
 
@@ -214,6 +243,11 @@ docs/UPSTREAM_REVIEW.md    Review of upstream copy-trading repo
 docs/ARCHITECTURE.md       Architecture truth source
 docs/DECISIONS.md          Major design decisions
 docs/CHANGELOG.md          Version history
+docs/DEPLOYMENT.md         Deployment guide
+docs/DATA_SOURCES.md       Data-source registry
+docs/AI_TEAM.md            Multi-AI collaboration guide
+docs/TRADER_REGISTRY.md    Trader lifecycle and registry rules
+docs/OPEN_SOURCE_REVIEW.md Open-source adoption policy
 public/index.html          Static mobile dashboard shell
 public/styles.css          Mobile-first dashboard styles
 public/app.js              Dashboard API client
