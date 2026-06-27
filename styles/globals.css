@@ -166,6 +166,22 @@ p {
   word-break: break-all;
 }
 
+.resolvedBox {
+  margin-top: 12px;
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+}
+
+.resolvedBox small {
+  color: #15803d;
+}
+
+.resolvedBox strong {
+  color: #166534;
+}
+
 .walletStats {
   display: grid;
   grid-template-columns: 1fr 1fr;
