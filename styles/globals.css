@@ -145,6 +145,26 @@ p {
   opacity: 0.62;
 }
 
+.quickTests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quickTests button {
+  border: 1px solid #d8cfc0;
+  border-radius: 999px;
+  padding: 8px 11px;
+  background: #fffaf0;
+  color: #475569;
+  font-weight: 700;
+}
+
+.quickTests button:disabled {
+  opacity: 0.62;
+}
+
 .walletResult {
   margin-top: 14px;
   border: 1px solid #edf1f5;
