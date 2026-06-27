@@ -6,7 +6,7 @@ This document records project progress, decisions, blockers, and handoff notes f
 
 ### Story 2 Documentation Progress
 
-Story 2 focus: make the multi-AI collaboration rules, deployment approach, and data-source rules explicit in GitHub so the project does not depend on chat history.
+Story 2 focus: make the multi-AI collaboration rules, deployment approach, trader registry rules, open-source review process, and data-source rules explicit in GitHub so the project does not depend on chat history.
 
 ### Completed
 
@@ -28,6 +28,18 @@ Story 2 focus: make the multi-AI collaboration rules, deployment approach, and d
   - Lists community tools and repos for reference only.
   - Defines usage rules: official first, trusted infrastructure second, community tools last.
 
+- Added `docs/TRADER_REGISTRY.md`.
+  - Defines trader lifecycle: DISCOVERED, WATCHING, VALIDATED, PAPER, LIVE_CANDIDATE, RETIRED, REJECTED.
+  - Defines Tier S, Tier A, and Tier B candidates.
+  - Adds initial trader candidates from research.
+  - Defines validation, safety, review, and downgrade rules.
+
+- Added `docs/OPEN_SOURCE_REVIEW.md`.
+  - Defines ADOPT, FORK, REFERENCE, and REJECT decisions.
+  - Defines open-source evaluation criteria.
+  - Classifies official sources, analytics tools, dashboards, and copy-trading bots.
+  - Adds architecture review gate before importing third-party code.
+
 ### Important Decisions
 
 - Story completion now requires GitHub documents/code, not only chat discussion.
@@ -35,6 +47,8 @@ Story 2 focus: make the multi-AI collaboration rules, deployment approach, and d
 - The current collaboration mode is multi-AI review and planning, not autonomous multi-agent coding.
 - Deployment remains staged: Vercel first, Railway/MongoDB/Telegram later.
 - Live execution remains disabled.
+- Open-source tools should be reused where mature and safe, but live trading paths must remain isolated.
+- MVP should be built first, then iterated quickly.
 
 ### Story 2 Task Status
 
@@ -43,18 +57,17 @@ Story 2 focus: make the multi-AI collaboration rules, deployment approach, and d
 | AI_TEAM.md | Done |
 | DATA_SOURCES.md | Done |
 | DEPLOYMENT.md | Done |
-| TRADER_REGISTRY.md | Not Started |
-| OPEN_SOURCE_REVIEW.md | Not Started |
-| Story 2 review | In Progress |
+| TRADER_REGISTRY.md | Done |
+| OPEN_SOURCE_REVIEW.md | Done |
+| Story 2 review | Done |
 
 ### Current Blockers
 
-- `docs/TRADER_REGISTRY.md` does not exist yet.
-- `docs/OPEN_SOURCE_REVIEW.md` does not exist yet.
 - Vercel deployment has not been manually verified yet.
 - Real Polymarket wallet ingestion does not exist yet.
 - MongoDB persistence is not wired yet.
 - Telegram alerts are not wired yet.
+- Paper-trading simulator currently uses deterministic mock PnL, not real settlement or mark-to-market data.
 
 ### Next Handoff: Read This First
 
@@ -66,27 +79,29 @@ Story 2 focus: make the multi-AI collaboration rules, deployment approach, and d
 6. `docs/DEPLOYMENT.md` for deployment architecture.
 7. `docs/DATA_SOURCES.md` for Polymarket data-source rules.
 8. `docs/AI_TEAM.md` for multi-AI collaboration rules.
-9. `docs/CHANGELOG.md` for version history.
-10. `ROADMAP.md` for implementation order.
-11. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
-12. `.env.example` for safe default settings.
-13. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
-14. `api/_mockData.js` and `api/*` for Vercel serverless endpoints.
-15. `src/server.ts` for local Express development.
-16. `src/config/env.ts` for startup safety checks.
-17. `docs/PROGRESS.md` for project history and next actions.
+9. `docs/TRADER_REGISTRY.md` for trader lifecycle and watchlist rules.
+10. `docs/OPEN_SOURCE_REVIEW.md` for third-party adoption policy.
+11. `docs/CHANGELOG.md` for version history.
+12. `ROADMAP.md` for implementation order.
+13. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
+14. `.env.example` for safe default settings.
+15. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
+16. `api/_mockData.js` and `api/*` for Vercel serverless endpoints.
+17. `src/server.ts` for local Express development.
+18. `src/config/env.ts` for startup safety checks.
+19. `docs/PROGRESS.md` for project history and next actions.
 
 ### Recommended Next Steps
 
-1. Add `docs/TRADER_REGISTRY.md`.
-2. Add `docs/OPEN_SOURCE_REVIEW.md` or consolidate with existing `docs/UPSTREAM_REVIEW.md`.
-3. Connect the repository to Vercel.
-4. Deploy the first preview.
-5. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
+1. Connect the repository to Vercel.
+2. Deploy the first preview.
+3. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
+4. Fix deployment issues if any.
+5. Begin MVP v0.2: replace mock data with read-only Polymarket data.
 
 ### Current Status
 
-Phase: Story 2 documentation hardening
+Phase: Story 2 documentation hardening complete; ready for first Vercel preview
 
 Execution mode: Paper trading scaffold with mock data
 
