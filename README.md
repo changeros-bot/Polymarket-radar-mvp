@@ -1,56 +1,46 @@
 # Polymarket Radar MVP
 
-Polymarket Radar MVP is a mobile-first system for finding high-performing Polymarket traders, tracking their wallets, and simulating copy-trading results with virtual capital before any real-money execution is considered.
+Polymarket Radar MVP is a mobile-first dashboard for finding high-performing Polymarket traders, tracking candidate wallets, and simulating copy-trading results before any real-money execution is considered.
 
-The current MVP is **trader radar plus paper trading only**. It must not request private keys, submit real CLOB orders, redeem positions, or move funds.
+The current product is **preview dashboard + mock trader radar only**. It must not request private keys, submit real CLOB orders, redeem positions, or move funds.
 
 ## Project Purpose
 
-The main goal is to identify Polymarket players with strong win rate, high realized profit, disciplined position sizing, and repeatable trading behavior.
+The project exists to answer one practical question:
 
-The first question this project must answer is:
+> If Josh follows a high-performing Polymarket trader with delayed, limited-size, simulated trades, does the strategy still perform well after slippage, drawdown, and risk controls?
 
-> If I copy this Polymarket trader with simulated money, does the strategy still perform well after delay, sizing limits, and drawdown?
+The product should not blindly copy popular wallets. It should help identify traders with repeatable edge, consistent profit, acceptable drawdown, and explainable behavior.
 
-This is not meant to blindly copy any popular wallet. The system should filter for traders who are profitable, consistent, and worth studying.
-
-## Current Status
-
-Current implementation status:
-
-- GitHub repository created.
-- Documentation baseline created.
-- Safety policy created.
-- Upstream repository review completed.
-- Clean TypeScript API scaffold created.
-- Mock trader wallet data created.
-- Mock recent trades created.
-- Paper-trading simulation scaffold created.
-- Static mobile dashboard completed for Sprint 1 bootstrap.
-- Vercel-compatible serverless API endpoints added under `api/`.
-- Vercel routing configuration added.
-
-Current phase:
+## Current Production Status
 
 ```text
-Sprint 2: Deploy first Vercel preview
+MVP v0.1: Deployed on Vercel Production
+Execution mode: Preview / mock data only
+Trading mode: Real trading disabled
 ```
 
-Current execution mode:
+Current stack:
 
 ```text
-Paper trading / preview mode only
-```
-
-Real trading status:
-
-```text
-Disabled until later explicit approval
+Next.js 14
+React 18
+Vercel Production
+GitHub main branch deployment
 ```
 
 ## Current Features
 
-Available dashboard/API endpoints:
+The current deployed MVP includes:
+
+- Mobile-first dark dashboard.
+- Mock top trader list.
+- Mock recent paper signals.
+- Preview-only system status.
+- Next.js API routes for future data replacement.
+- Vercel production deployment.
+
+Available routes:
 
 ```text
 GET /
@@ -63,152 +53,72 @@ GET /api/paper/summary
 Current data source:
 
 ```text
-Mock trader and mock trade data
+Mock data only
 ```
 
-Current simulator:
+No real Polymarket data, wallet ingestion, MongoDB persistence, Telegram alert, or live trading is connected yet.
 
-```text
-Deterministic mock paper-trading PnL scaffold
-```
+## Local Startup
 
-## Core Workflow
-
-1. Find candidate Polymarket wallets with high win rate and strong profit.
-2. Add selected wallets to the watchlist.
-3. Track recent bets, trade frequency, position size, ROI, win rate, PnL, and drawdown.
-4. Simulate copy-trading with virtual money.
-5. Run paper trading for 14–30 days.
-6. Review simulated ROI, maximum drawdown, latency, and trade quality.
-7. Only after passing the review gate, discuss small-size live copy trading.
-
-## MVP Deployment From Mobile
-
-Use this when deploying from an Android phone.
-
-1. Open Vercel.
-2. Tap **Add New Project**.
-3. Import this GitHub repository:
-
-```text
-changeros-bot/Polymarket-radar-mvp
-```
-
-4. Keep the root directory as the repository root.
-5. No environment variables are required for the first mock preview.
-6. Tap **Deploy**.
-7. After deployment, open the generated `.vercel.app` URL on mobile.
-
-Verify these routes:
-
-```text
-/
-/api/health
-/api/traders
-/api/trades/recent
-/api/paper/summary
-```
-
-The first successful deployment only needs to prove that the dashboard and mock APIs load.
-
-## Product Phases
-
-### Phase 1: Trader Radar
-
-- Track selected Polymarket trader wallets.
-- Display wallet analytics.
-- Show recent bets and activity.
-- Rank traders by ROI, win rate, realized profit, drawdown, and consistency.
-- Send Telegram alerts when a tracked wallet places a new bet.
-- No private key.
-- No real order.
-
-### Phase 2: Paper Trading
-
-- Simulate copy-trading with virtual capital.
-- Track simulated entry, exit, PnL, win rate, and drawdown.
-- Include estimated delay and slippage assumptions.
-- Run for at least 14–30 days before any real trading discussion.
-
-Default settings:
-
-```env
-PREVIEW_MODE=true
-COPY_SIZE=1
-MAX_ORDER_SIZE_USD=2
-PAPER_STARTING_BALANCE_USD=100
-PAPER_TRADING_DAYS=14
-```
-
-### Phase 3: Shadow Trading
-
-- Connect exchange or trading API in read-only / no-execution mode.
-- Read balances, positions, and market data if needed.
-- Generate intended orders but do not submit them.
-- Continue Telegram alerts and risk checks.
-
-### Phase 4: Small Live Copy Trading
-
-- Enable real trading only after explicit approval.
-- Start with very small size.
-- Require kill switch, max daily loss, max order size, wallet whitelist, and market blacklist.
-- Keep full logs for every decision and order.
-
-## Startup Method
-
-Local Express/TypeScript development flow:
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Run local development server:
+
+```bash
 npm run dev
 ```
 
-Build and start:
+Build production bundle:
 
 ```bash
 npm run build
+```
+
+Start production server locally:
+
+```bash
 npm start
 ```
 
-Type check:
+## Deployment
 
-```bash
-npm run typecheck
-```
-
-## Deployment Method
-
-Preferred MVP deployment path:
+The MVP is deployed through:
 
 ```text
-GitHub -> Vercel -> Mobile Dashboard
+GitHub main branch -> Vercel -> Production URL
 ```
 
-The current Vercel deployment uses:
+Vercel settings:
 
 ```text
-public/             static dashboard
-api/*.js            Vercel serverless API endpoints
-vercel.json         routing config
+Framework: Next.js
+Root Directory: ./
+Build Command: npm run build
+Output Directory: default
+Environment Variables: none required for v0.1
 ```
 
-Planned supporting services:
+Important deployment files:
 
 ```text
-MongoDB Atlas -> persistence
-Telegram Bot -> alerts
-Railway or another worker platform -> optional future background scanner
+package.json
+next.config.js
+tsconfig.json
+vercel.json
+pages/index.js
+pages/api/*
+styles/globals.css
 ```
-
-Deployment direction:
-
-- Use Vercel for the mobile dashboard and API where possible.
-- Use MongoDB Atlas for trader registry, trade history, paper trades, alerts, and decision logs.
-- Add a separate worker only when continuous background scanning is needed.
 
 ## Environment Variables
 
-Required for Phase 1 and Phase 2:
+No environment variables are required for MVP v0.1.
+
+Planned variables for later phases:
 
 ```env
 PREVIEW_MODE=true
@@ -219,84 +129,83 @@ PAPER_TRADING_DAYS=14
 MONGODB_URI=
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
+POLYMARKET_API_URL=https://clob.polymarket.com
 ```
 
-Forbidden in Phase 1 and Phase 2:
+Forbidden until explicitly approved:
 
 ```env
 PRIVATE_KEY=
 PROXY_WALLET=
 ```
 
-If `PRIVATE_KEY` or `PROXY_WALLET` is set during Phase 1 or Phase 2, the app should refuse to start.
+If real-execution credentials are ever added, the app must include safety gates before any order path is enabled.
 
-## Important Files
+## Known Issues / Current Limitations
 
-```text
-README.md                  Project overview and startup guide
-AI_CONTEXT.md              AI handoff context and coding rules
-SAFETY.md                  Safety policy and phase gates
-ROADMAP.md                 Product milestones
-PROJECT_STATUS.md          Current project status
-docs/PROGRESS.md           Daily progress and handoff log
-docs/UPSTREAM_REVIEW.md    Review of upstream copy-trading repo
-docs/ARCHITECTURE.md       Architecture truth source
-docs/DECISIONS.md          Major design decisions
-docs/CHANGELOG.md          Version history
-docs/DEPLOYMENT.md         Deployment guide
-docs/DATA_SOURCES.md       Data-source registry
-docs/AI_TEAM.md            Multi-AI collaboration guide
-docs/TRADER_REGISTRY.md    Trader lifecycle and registry rules
-docs/OPEN_SOURCE_REVIEW.md Open-source adoption policy
-public/index.html          Static mobile dashboard shell
-public/styles.css          Mobile-first dashboard styles
-public/app.js              Dashboard API client
-api/_mockData.js           Shared mock data for Vercel APIs
-api/health.js              Vercel health endpoint
-api/traders.js             Vercel traders endpoint
-api/trades/recent.js       Vercel recent trades endpoint
-api/paper/summary.js       Vercel paper trading endpoint
-src/server.ts              Local Express API scaffold
-src/config/env.ts          Environment parsing and safety guard
-src/data/mockWallets.ts    Mock trader and trade data
-src/simulation/paperTrading.ts Paper-trading simulator scaffold
-```
-
-## Known Issues
-
-- Vercel deployment has not yet been manually verified.
-- Real Polymarket wallet ingestion does not exist yet.
-- MongoDB persistence is not wired yet.
-- Telegram alerts are not wired yet.
-- Paper-trading simulator currently uses mock PnL, not real settlement or mark-to-market data.
-- No production deployment URL exists yet.
+- Dashboard uses mock data only.
+- Trader names and scores are placeholders.
+- No real Polymarket wallet ingestion yet.
+- No real ROI / win rate calculation yet.
+- No MongoDB persistence yet.
+- No Telegram alert yet.
+- No paper-trading ledger yet.
+- Old Express/TypeScript scaffold may still exist under `src/`, but it is not part of the current Vercel MVP path.
+- Live trading is intentionally disabled.
 
 ## Next Steps
 
-1. Connect this repository to Vercel and deploy the first mobile-readable preview.
-2. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
-3. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
-4. Add MongoDB Atlas persistence.
-5. Add Telegram alerts.
-6. Add real paper-trading records and daily reports.
-7. Add Trader Registry, Radar Score, and Discovery Engine.
+### MVP v0.2: Live Read-Only Data
 
-## Decision Gate
+- Replace mock market and trader data with Polymarket official read-only data.
+- Start with official Gamma API and Data API where possible.
+- Keep all execution disabled.
 
-Small live copy trading can only be discussed after:
+### MVP v0.3: Wallet Radar
 
-- 14–30 days of paper-trading results.
-- Positive simulated performance.
-- Acceptable maximum drawdown.
-- No low-quality chase trades.
-- Acceptable tracking delay.
-- Clear wallet whitelist.
-- Explicit user approval.
+- Add wallet input.
+- Add watchlist.
+- Display wallet address, recent activity, ROI, win rate, and observed behavior.
 
-## Development Rule
+### MVP v0.4: Paper Trading Ledger
 
-Every development cycle should follow this order:
+- Record simulated copy trades.
+- Track simulated entry, exit, PnL, win rate, ROI, and drawdown.
+- Run paper mode for at least 14 days before any live-trading discussion.
+
+### MVP v1.0: Alerts and Risk Review
+
+- Add Telegram alerts.
+- Add daily paper-trading report.
+- Add risk controls and review gates.
+- Discuss live trading only after data supports it and Josh explicitly approves it.
+
+## Handoff Notes for AI / Engineers
+
+Read these files first:
+
+```text
+README.md
+docs/PROGRESS.md
+docs/DEPLOYMENT.md
+docs/DATA_SOURCES.md
+docs/TRADER_REGISTRY.md
+docs/OPEN_SOURCE_REVIEW.md
+```
+
+Current source of truth:
+
+```text
+Vercel MVP path = Next.js pages/ + pages/api/
+Old root api/ and static public/index.html were removed or deprecated during deployment repair.
+```
+
+Development rule:
 
 ```text
 Plan -> Modify -> Commit -> Update Progress -> Summarize Impact -> Define Next Step
 ```
+
+## Safety Rule
+
+Do not add real trading, private key handling, wallet funding, order submission, redemption, or fund movement unless a later phase explicitly approves it.
