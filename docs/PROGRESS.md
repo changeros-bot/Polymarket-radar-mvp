@@ -13,6 +13,16 @@ Story 3 focus: deploy the first mobile-readable Vercel preview for the Polymarke
 - Updated `README.md` with mobile-first Vercel deployment steps.
 - Confirmed the first preview can use static `public/` assets and `api/` serverless mock endpoints.
 - Confirmed no secrets are required for the first Vercel mock preview.
+- Vercel project was created but had no production deployment.
+- Converted the repo into a minimal Next.js deployable app.
+- Updated `package.json` to use `next`, `react`, and `react-dom`.
+- Added `pages/index.js` as the first MVP dashboard page.
+- Added `pages/_app.js` and `styles/globals.css`.
+- Added Next.js API routes:
+  - `pages/api/health.js`
+  - `pages/api/traders.js`
+  - `pages/api/trades/recent.js`
+  - `pages/api/paper/summary.js`
 
 ### Story 3 Task Status
 
@@ -20,20 +30,18 @@ Story 3 focus: deploy the first mobile-readable Vercel preview for the Polymarke
 |---|---|
 | GitHub repo ready | Done |
 | README mobile deploy steps | Done |
-| Vercel project import | Pending user action |
-| Preview URL generated | Not Started |
+| Vercel project import | Done |
+| Minimal Next.js app | Done |
+| Preview URL generated | Waiting for Vercel deployment |
 | Mobile dashboard verification | Not Started |
 | API verification | Not Started |
 
-### Manual Deployment Steps
+### Manual Deployment / Redeploy Steps
 
-1. Open Vercel on mobile.
-2. Add a new project.
-3. Import `changeros-bot/Polymarket-radar-mvp`.
-4. Keep repository root as project root.
-5. Do not add environment variables for the first mock preview.
-6. Deploy.
-7. Verify:
+1. Open the Vercel project `polymarket-radar-mvp`.
+2. Check whether a new deployment started after the latest GitHub commit.
+3. If no deployment starts automatically, open the project menu and trigger redeploy from main branch.
+4. Verify:
    - `/`
    - `/api/health`
    - `/api/traders`
@@ -42,34 +50,33 @@ Story 3 focus: deploy the first mobile-readable Vercel preview for the Polymarke
 
 ### Current Blockers
 
-- Vercel import/deploy requires user action in the Vercel account.
+- Need to confirm whether Vercel picked up the latest GitHub commit.
 - Vercel deployment has not been manually verified yet.
 - Real Polymarket wallet ingestion does not exist yet.
 - MongoDB persistence is not wired yet.
 - Telegram alerts are not wired yet.
-- Paper-trading simulator currently uses deterministic mock PnL, not real settlement or mark-to-market data.
 
 ### Next Handoff: Read This First
 
 1. `README.md` for mobile deployment steps.
 2. `docs/DEPLOYMENT.md` for staged deployment architecture.
 3. `docs/PROGRESS.md` for current deployment status.
-4. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
-5. `api/_mockData.js` and `api/*` for Vercel serverless endpoints.
+4. `pages/index.js` for the Next.js dashboard.
+5. `pages/api/*` for Vercel API routes.
 
 ### Recommended Next Steps
 
-1. Deploy to Vercel.
-2. Share the Vercel URL back into chat.
+1. Check Vercel deployments again.
+2. Share the Vercel URL or failed build log back into chat.
 3. Verify the dashboard and API endpoints.
-4. Fix any routing or API issue immediately.
+4. Fix any routing or build issue immediately.
 5. Begin MVP v0.2: replace mock data with read-only Polymarket data.
 
 ### Current Status
 
-Phase: Story 3 Vercel deployment waiting for first preview
+Phase: Story 3 Vercel deployment waiting for first successful preview
 
-Execution mode: Paper trading scaffold with mock data
+Execution mode: Preview dashboard with mock data
 
 Trading mode: Real trading disabled until later approval
 
@@ -82,34 +89,10 @@ Story 2 focus: make the multi-AI collaboration rules, deployment approach, trade
 ### Completed
 
 - Added `docs/DEPLOYMENT.md`.
-  - Defines Phase 1 Vercel-only preview deployment.
-  - Defines Phase 2 hybrid architecture: Vercel + Railway + MongoDB Atlas + Telegram.
-  - Lists environment variables and verification checklist.
-  - Clarifies that Vercel is for frontend/preview and Railway is for long-running workers/WebSocket.
-
 - Added `docs/AI_TEAM.md`.
-  - Defines ChatGPT, Claude, Gemini, Perplexity, Grok, Qwen, and CubeLV roles.
-  - Defines input/output contract for multi-AI review.
-  - Defines conflict resolution, review cadence, and safety boundaries.
-  - States that GitHub documents are the source of truth.
-
 - Added `docs/DATA_SOURCES.md`.
-  - Lists official Polymarket data sources: Gamma API, Data API, CLOB API, WebSocket, Bridge API, SDKs, and Subgraph.
-  - Lists trusted infrastructure sources: Goldsky, The Graph, Dune, Allium.
-  - Lists community tools and repos for reference only.
-  - Defines usage rules: official first, trusted infrastructure second, community tools last.
-
 - Added `docs/TRADER_REGISTRY.md`.
-  - Defines trader lifecycle: DISCOVERED, WATCHING, VALIDATED, PAPER, LIVE_CANDIDATE, RETIRED, REJECTED.
-  - Defines Tier S, Tier A, and Tier B candidates.
-  - Adds initial trader candidates from research.
-  - Defines validation, safety, review, and downgrade rules.
-
 - Added `docs/OPEN_SOURCE_REVIEW.md`.
-  - Defines ADOPT, FORK, REFERENCE, and REJECT decisions.
-  - Defines open-source evaluation criteria.
-  - Classifies official sources, analytics tools, dashboards, and copy-trading bots.
-  - Adds architecture review gate before importing third-party code.
 
 ### Important Decisions
 
@@ -159,21 +142,3 @@ Story 2 focus: make the multi-AI collaboration rules, deployment approach, trade
   - `docs/ARCHITECTURE.md`
   - `docs/DECISIONS.md`
   - `docs/CHANGELOG.md`
-
-### Decisions Made
-
-- The project will remain separated from `discount-hunter`.
-- The user eventually wants real automated copy trading, but only after simulated-money validation.
-- The first usable version focuses on finding and tracking strong Polymarket traders.
-- The first trading-like behavior is paper trading with virtual capital.
-- The paper-trading window should run for 14–30 days before any live mode discussion.
-- `PREVIEW_MODE=true` is mandatory during Phase 1 and Phase 2.
-- Phase 1 and Phase 2 must not require `PRIVATE_KEY`.
-- Phase 1 and Phase 2 must not submit real Polymarket CLOB orders.
-- The upstream repo should be treated as a reference source, not copied wholesale.
-- The clean MVP starts from mock data and safe APIs, then progressively replaces mock data with real read-only Polymarket data.
-- Vercel is preferred for the dashboard because the user's existing Discount Hunter project already uses Vercel.
-- For first mobile deployment, static `public/` assets plus Vercel serverless functions are preferred over a long-running Express service.
-- A separate worker platform can be added later for continuous wallet scanning.
-- Telegram will be used for new-wallet-activity alerts.
-- Future live execution must remain isolated behind phase gates.
