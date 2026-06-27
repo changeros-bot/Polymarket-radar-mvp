@@ -1,78 +1,150 @@
-const traders = [
-  { name: 'Theo4', tier: 'S', score: 94, roi: '+38.4%', status: 'Watching' },
-  { name: 'sparklingwater123', tier: 'S', score: 91, roi: '+31.2%', status: 'Watching' },
-  { name: 'fishalive', tier: 'S', score: 88, roi: '+24.8%', status: 'Watching' },
-  { name: 'mintblade', tier: 'A', score: 84, roi: '+19.6%', status: 'Discovered' }
-];
+import { useEffect, useMemo, useState } from 'react';
 
-const trades = [
-  { trader: 'Theo4', market: 'Election market', side: 'YES', size: '$120', result: 'Paper only' },
-  { trader: 'fishalive', market: 'Football upset', side: 'NO', size: '$80', result: 'Paper only' },
-  { trader: 'mintblade', market: 'Crypto market', side: 'YES', size: '$45', result: 'Paper only' }
-];
+const emptyPayload = {
+  items: [],
+  count: 0,
+  source: 'loading',
+  fallback: false,
+  updatedAt: null
+};
+
+const formatTime = (value) => {
+  if (!value) return 'Not updated yet';
+  try {
+    return new Date(value).toLocaleString();
+  } catch (_error) {
+    return value;
+  }
+};
+
+const sourceLabel = (payload) => {
+  if (!payload) return 'Loading';
+  if (payload.fallback) return 'Mock fallback';
+  if (payload.source === 'polymarket-gamma') return 'Gamma API';
+  return payload.source || 'Unknown';
+};
 
 export default function Home() {
+  const [traders, setTraders] = useState(emptyPayload);
+  const [signals, setSignals] = useState(emptyPayload);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const [traderResponse, signalResponse] = await Promise.all([
+          fetch('/api/traders'),
+          fetch('/api/trades/recent')
+        ]);
+
+        const [traderPayload, signalPayload] = await Promise.all([
+          traderResponse.json(),
+          signalResponse.json()
+        ]);
+
+        if (!active) return;
+        setTraders(traderPayload);
+        setSignals(signalPayload);
+      } catch (err) {
+        if (!active) return;
+        setError(err.message || 'Failed to load dashboard data');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadData();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const liveStatus = useMemo(() => {
+    if (loading) return 'Loading';
+    if (error) return 'Error';
+    if (traders.fallback || signals.fallback) return 'Fallback';
+    return 'Live';
+  }, [loading, error, traders.fallback, signals.fallback]);
+
   return (
     <main className="page">
       <section className="hero">
         <div className="badge">Preview Mode · No real trading</div>
         <h1>Polymarket Radar MVP</h1>
-        <p>Mobile-first trader radar for tracking high-performing Polymarket wallets and simulating copy-trading before any real-money execution.</p>
+        <p>Mobile-first radar for finding high-quality Polymarket signals before any real-money copy trading is considered.</p>
       </section>
 
       <section className="grid">
         <div className="card">
-          <span className="label">System Status</span>
-          <h2>Online</h2>
-          <p>Vercel preview dashboard is running with mock data.</p>
+          <span className="label">Data Status</span>
+          <h2>{liveStatus}</h2>
+          <p>{error ? error : `Traders: ${sourceLabel(traders)} · Signals: ${sourceLabel(signals)}`}</p>
         </div>
         <div className="card">
           <span className="label">Trading Mode</span>
-          <h2>Paper Only</h2>
-          <p>Private keys, real orders, and fund movement are disabled.</p>
+          <h2>Read-Only</h2>
+          <p>No private keys, no live orders, no fund movement. Current step is live data verification only.</p>
         </div>
       </section>
 
       <section className="section">
-        <h2>Top Traders</h2>
+        <div className="sectionTitle">
+          <div>
+            <h2>Live Market Radar</h2>
+            <small>{formatTime(traders.updatedAt)}</small>
+          </div>
+          <span className={traders.fallback ? 'pill warning' : 'pill'}>{sourceLabel(traders)}</span>
+        </div>
         <div className="list">
-          {traders.map((t) => (
-            <div className="row" key={t.name}>
+          {(traders.items || []).map((t) => (
+            <a className="row linkRow" key={t.id || t.name} href={t.url || '#'} target="_blank" rel="noreferrer">
               <div>
                 <strong>{t.name}</strong>
                 <small>Tier {t.tier} · {t.status}</small>
               </div>
               <div className="score">
                 <span>{t.score}</span>
-                <small>{t.roi}</small>
+                <small>{t.performance}</small>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </section>
 
       <section className="section">
-        <h2>Recent Paper Signals</h2>
+        <div className="sectionTitle">
+          <div>
+            <h2>Recent Read-Only Signals</h2>
+            <small>{formatTime(signals.updatedAt)}</small>
+          </div>
+          <span className={signals.fallback ? 'pill warning' : 'pill'}>{sourceLabel(signals)}</span>
+        </div>
         <div className="list">
-          {trades.map((t, index) => (
-            <div className="row" key={index}>
+          {(signals.items || []).map((t, index) => (
+            <a className="row linkRow" key={t.sourceId || index} href={t.url || '#'} target="_blank" rel="noreferrer">
               <div>
-                <strong>{t.trader}</strong>
-                <small>{t.market} · {t.side}</small>
+                <strong>{t.source}</strong>
+                <small>{t.topic} · {t.side}</small>
               </div>
               <div className="score">
                 <span>{t.size}</span>
-                <small>{t.result}</small>
+                <small>{t.mode}</small>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </section>
 
       <section className="card footerCard">
         <span className="label">Next Step</span>
-        <h2>MVP v0.2</h2>
-        <p>Replace mock data with read-only Polymarket official API data.</p>
+        <h2>Wallet Radar</h2>
+        <p>Add wallet search and watchlist after live read-only endpoints are stable.</p>
       </section>
     </main>
   );
