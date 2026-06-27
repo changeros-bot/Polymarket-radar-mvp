@@ -31,11 +31,19 @@ const liveStatusText = (status) => {
   return '即時資料';
 };
 
+const formatUsd = (value) => {
+  const amount = Number(value || 0);
+  return `$${Math.round(amount).toLocaleString()}`;
+};
+
 export default function Home() {
   const [traders, setTraders] = useState(emptyPayload);
   const [signals, setSignals] = useState(emptyPayload);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [walletInput, setWalletInput] = useState('');
+  const [walletResult, setWalletResult] = useState(null);
+  const [walletLoading, setWalletLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -79,24 +87,76 @@ export default function Home() {
     return 'Live';
   }, [loading, error, traders.fallback, signals.fallback]);
 
+  const searchWallet = async (event) => {
+    event.preventDefault();
+    const query = walletInput.trim();
+    if (!query) return;
+
+    setWalletLoading(true);
+    setWalletResult(null);
+
+    try {
+      const response = await fetch(`/api/wallet/${encodeURIComponent(query)}`);
+      const payload = await response.json();
+      setWalletResult(payload);
+    } catch (err) {
+      setWalletResult({
+        ok: false,
+        fallback: true,
+        error: err.message || 'Wallet 查詢失敗',
+        wallet: { address: query, tradeCount: 0, totalVolume: 0, recentItems: [] }
+      });
+    } finally {
+      setWalletLoading(false);
+    }
+  };
+
+  const wallet = walletResult?.wallet;
+
   return (
     <main className="page">
       <section className="hero">
-        <div className="badge">MVP v0.1 · 僅監看 · 不下單</div>
+        <div className="badge">MVP v0.2 · Wallet Radar · 僅監看</div>
         <h1>Polymarket Radar</h1>
-        <p>先驗證 Polymarket 即時資料、手機瀏覽與市場連結。真正的 Wallet 跟單、AI 評分與模擬交易會在下一版開始。</p>
+        <p>先用只讀資料查詢 Wallet 活動，之後再加入 ROI、勝率、模擬跟單與 AI 跟單評分。</p>
       </section>
 
       <section className="section validationCard">
         <span className="label">本版驗證重點</span>
-        <h2>請先測這 5 件事</h2>
+        <h2>請測 Wallet 搜尋</h2>
         <ul className="checklist">
-          <li>API 是否能取得 Polymarket 資料</li>
-          <li>手機版是否容易閱讀與滑動</li>
-          <li>更新時間與資料來源是否清楚</li>
-          <li>點擊 Market 是否能正確開到 Polymarket</li>
-          <li>頁面是否穩定，沒有空白或錯誤</li>
+          <li>輸入 Polymarket 使用者或 wallet 後是否能查詢</li>
+          <li>查詢失敗時首頁不能壞掉</li>
+          <li>是否能顯示近期活動筆數與成交量</li>
+          <li>市場雷達連結仍可正確開到 Polymarket</li>
         </ul>
+      </section>
+
+      <section className="section walletCard">
+        <span className="label">Wallet Radar</span>
+        <h2>查詢神人 Wallet</h2>
+        <form className="walletForm" onSubmit={searchWallet}>
+          <input
+            value={walletInput}
+            onChange={(event) => setWalletInput(event.target.value)}
+            placeholder="輸入 @mepp 或 wallet 地址"
+          />
+          <button type="submit" disabled={walletLoading}>{walletLoading ? '查詢中' : '查詢'}</button>
+        </form>
+        {wallet && (
+          <div className="walletResult">
+            <div>
+              <small>查詢目標</small>
+              <strong>{wallet.address}</strong>
+            </div>
+            <div className="walletStats">
+              <div><span>{wallet.tradeCount || 0}</span><small>近期活動</small></div>
+              <div><span>{formatUsd(wallet.totalVolume)}</span><small>估算成交量</small></div>
+            </div>
+            {wallet.profileUrl && <a className="textLink" href={wallet.profileUrl} target="_blank" rel="noreferrer">開啟 Polymarket 個人頁</a>}
+            {walletResult?.error && <p className="errorText">{walletResult.error}</p>}
+          </div>
+        )}
       </section>
 
       <section className="grid">
@@ -108,7 +168,7 @@ export default function Home() {
         <div className="card">
           <span className="label">交易模式</span>
           <h2>僅監看</h2>
-          <p>沒有私鑰、沒有真實下單、沒有資金移動。這一版只驗證資料與連結。</p>
+          <p>沒有私鑰、沒有真實下單、沒有資金移動。這一版只驗證資料與 Wallet 查詢。</p>
         </div>
       </section>
 
@@ -158,12 +218,6 @@ export default function Home() {
             </a>
           ))}
         </div>
-      </section>
-
-      <section className="card footerCard">
-        <span className="label">下一步</span>
-        <h2>Wallet Radar</h2>
-        <p>等 v0.1 驗證通過後，下一版開始做神人 Wallet 搜尋、追蹤清單與模擬跟單。</p>
       </section>
     </main>
   );
