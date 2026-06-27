@@ -8,6 +8,8 @@ const emptyPayload = {
   updatedAt: null
 };
 
+const quickWalletTests = ['@mepp', '@swisstony', '@rosewood'];
+
 const formatTime = (value) => {
   if (!value) return '尚未更新';
   try {
@@ -102,16 +104,16 @@ export default function Home() {
     return 'Live';
   }, [loading, error, traders.fallback, signals.fallback]);
 
-  const searchWallet = async (event) => {
-    event.preventDefault();
-    const query = walletInput.trim();
-    if (!query) return;
+  const runWalletSearch = async (query) => {
+    const target = String(query || '').trim();
+    if (!target) return;
 
+    setWalletInput(target);
     setWalletLoading(true);
     setWalletResult(null);
 
     try {
-      const response = await fetch(`/api/wallet/${encodeURIComponent(query)}`);
+      const response = await fetch(`/api/wallet/${encodeURIComponent(target)}`);
       const payload = await response.json();
       setWalletResult(payload);
     } catch (err) {
@@ -119,11 +121,16 @@ export default function Home() {
         ok: false,
         fallback: true,
         error: err.message || 'Wallet 查詢失敗',
-        wallet: { address: query, tradeCount: 0, totalVolume: 0, recentItems: [] }
+        wallet: { address: target, tradeCount: 0, totalVolume: 0, recentItems: [] }
       });
     } finally {
       setWalletLoading(false);
     }
+  };
+
+  const searchWallet = async (event) => {
+    event.preventDefault();
+    runWalletSearch(walletInput);
   };
 
   const wallet = walletResult?.wallet;
@@ -132,18 +139,18 @@ export default function Home() {
   return (
     <main className="page">
       <section className="hero">
-        <div className="badge">MVP v0.4.2 · Wallet Activity · 僅監看</div>
+        <div className="badge">MVP v0.4.3 · Resolver Test · 僅監看</div>
         <h1>Polymarket Radar</h1>
-        <p>先把已解析的 wallet 活動列出來，確認資料鏈可用，再開始計算 ROI、勝率與 Copy Score。</p>
+        <p>快速測試多個使用者能否解析 wallet，確認 Resolver 不是只對單一玩家有效。</p>
       </section>
 
       <section className="section validationCard">
         <span className="label">本版驗證重點</span>
-        <h2>請測 Wallet 活動</h2>
+        <h2>請測 Username 解析</h2>
         <ul className="checklist">
-          <li>輸入 @mepp 應顯示 resolved wallet</li>
-          <li>應顯示近期活動筆數與估算成交量</li>
-          <li>如果有 activity，應列出最近交易/活動</li>
+          <li>點快速測試名單，確認是否可解析 wallet</li>
+          <li>解析成功應顯示 resolved wallet 與 activity</li>
+          <li>解析失敗應顯示待解析，不應報錯或空白</li>
           <li>市場雷達連結仍可正確開到 Polymarket</li>
         </ul>
       </section>
@@ -159,6 +166,11 @@ export default function Home() {
           />
           <button type="submit" disabled={walletLoading}>{walletLoading ? '查詢中' : '查詢'}</button>
         </form>
+        <div className="quickTests">
+          {quickWalletTests.map((name) => (
+            <button type="button" key={name} onClick={() => runWalletSearch(name)} disabled={walletLoading}>{name}</button>
+          ))}
+        </div>
         {wallet && (
           <div className="walletResult">
             <div>
