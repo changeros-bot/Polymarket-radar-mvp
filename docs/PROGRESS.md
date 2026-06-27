@@ -2,6 +2,98 @@
 
 This document records project progress, decisions, blockers, and handoff notes for GitHub version control and AI-assisted development.
 
+## 2026-06-27
+
+### Story 2 Documentation Progress
+
+Story 2 focus: make the multi-AI collaboration rules, deployment approach, and data-source rules explicit in GitHub so the project does not depend on chat history.
+
+### Completed
+
+- Added `docs/DEPLOYMENT.md`.
+  - Defines Phase 1 Vercel-only preview deployment.
+  - Defines Phase 2 hybrid architecture: Vercel + Railway + MongoDB Atlas + Telegram.
+  - Lists environment variables and verification checklist.
+  - Clarifies that Vercel is for frontend/preview and Railway is for long-running workers/WebSocket.
+
+- Added `docs/AI_TEAM.md`.
+  - Defines ChatGPT, Claude, Gemini, Perplexity, Grok, Qwen, and CubeLV roles.
+  - Defines input/output contract for multi-AI review.
+  - Defines conflict resolution, review cadence, and safety boundaries.
+  - States that GitHub documents are the source of truth.
+
+- Added `docs/DATA_SOURCES.md`.
+  - Lists official Polymarket data sources: Gamma API, Data API, CLOB API, WebSocket, Bridge API, SDKs, and Subgraph.
+  - Lists trusted infrastructure sources: Goldsky, The Graph, Dune, Allium.
+  - Lists community tools and repos for reference only.
+  - Defines usage rules: official first, trusted infrastructure second, community tools last.
+
+### Important Decisions
+
+- Story completion now requires GitHub documents/code, not only chat discussion.
+- CubeLV is temporarily unavailable, so ChatGPT is acting PM and architect.
+- The current collaboration mode is multi-AI review and planning, not autonomous multi-agent coding.
+- Deployment remains staged: Vercel first, Railway/MongoDB/Telegram later.
+- Live execution remains disabled.
+
+### Story 2 Task Status
+
+| Task | Status |
+|---|---|
+| AI_TEAM.md | Done |
+| DATA_SOURCES.md | Done |
+| DEPLOYMENT.md | Done |
+| TRADER_REGISTRY.md | Not Started |
+| OPEN_SOURCE_REVIEW.md | Not Started |
+| Story 2 review | In Progress |
+
+### Current Blockers
+
+- `docs/TRADER_REGISTRY.md` does not exist yet.
+- `docs/OPEN_SOURCE_REVIEW.md` does not exist yet.
+- Vercel deployment has not been manually verified yet.
+- Real Polymarket wallet ingestion does not exist yet.
+- MongoDB persistence is not wired yet.
+- Telegram alerts are not wired yet.
+
+### Next Handoff: Read This First
+
+1. `AI_CONTEXT.md` for AI-specific instructions and current sprint.
+2. `README.md` for project direction and startup guide.
+3. `SAFETY.md` for safety boundaries and phase gates.
+4. `docs/ARCHITECTURE.md` for architecture source of truth.
+5. `docs/DECISIONS.md` for design decisions.
+6. `docs/DEPLOYMENT.md` for deployment architecture.
+7. `docs/DATA_SOURCES.md` for Polymarket data-source rules.
+8. `docs/AI_TEAM.md` for multi-AI collaboration rules.
+9. `docs/CHANGELOG.md` for version history.
+10. `ROADMAP.md` for implementation order.
+11. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
+12. `.env.example` for safe default settings.
+13. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
+14. `api/_mockData.js` and `api/*` for Vercel serverless endpoints.
+15. `src/server.ts` for local Express development.
+16. `src/config/env.ts` for startup safety checks.
+17. `docs/PROGRESS.md` for project history and next actions.
+
+### Recommended Next Steps
+
+1. Add `docs/TRADER_REGISTRY.md`.
+2. Add `docs/OPEN_SOURCE_REVIEW.md` or consolidate with existing `docs/UPSTREAM_REVIEW.md`.
+3. Connect the repository to Vercel.
+4. Deploy the first preview.
+5. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
+
+### Current Status
+
+Phase: Story 2 documentation hardening
+
+Execution mode: Paper trading scaffold with mock data
+
+Trading mode: Real trading disabled until later approval
+
+---
+
 ## 2026-06-26
 
 ### Completed Today
@@ -66,9 +158,6 @@ This document records project progress, decisions, blockers, and handoff notes f
 - `src/server.ts`
   - Still available as a local Express development scaffold.
 
-- `docs/PROGRESS.md`
-  - Updated this handoff log.
-
 ### Decisions Made
 
 - The project will remain separated from `discount-hunter`.
@@ -86,45 +175,3 @@ This document records project progress, decisions, blockers, and handoff notes f
 - A separate worker platform can be added later for continuous wallet scanning.
 - Telegram will be used for new-wallet-activity alerts.
 - Future live execution must remain isolated behind phase gates.
-
-### Current Blockers
-
-- Vercel deployment has not been manually verified yet.
-- Real Polymarket wallet ingestion does not exist yet.
-- MongoDB persistence is not wired yet.
-- Telegram alerts are not wired yet.
-- Paper-trading simulator currently uses deterministic mock PnL, not real settlement or mark-to-market data.
-
-### Next Handoff: Read This First
-
-1. `AI_CONTEXT.md` for AI-specific instructions and current sprint.
-2. `README.md` for project direction and startup guide.
-3. `SAFETY.md` for safety boundaries and phase gates.
-4. `docs/ARCHITECTURE.md` for architecture source of truth.
-5. `docs/DECISIONS.md` for design decisions.
-6. `docs/CHANGELOG.md` for version history.
-7. `ROADMAP.md` for implementation order.
-8. `docs/UPSTREAM_REVIEW.md` for upstream import risk.
-9. `.env.example` for safe default settings.
-10. `public/index.html`, `public/styles.css`, and `public/app.js` for the static dashboard.
-11. `api/_mockData.js` and `api/*` for Vercel serverless endpoints.
-12. `src/server.ts` for local Express development.
-13. `src/config/env.ts` for startup safety checks.
-14. `docs/PROGRESS.md` for project history and next actions.
-
-### Recommended Next Steps
-
-1. Connect the repository to Vercel.
-2. Deploy the first preview.
-3. Verify `/`, `/api/health`, `/api/traders`, `/api/trades/recent`, and `/api/paper/summary` on the deployed URL.
-4. Replace mock wallet data with read-only Polymarket wallet activity ingestion.
-5. Add MongoDB persistence.
-6. Add Telegram alerts.
-
-### Current Status
-
-Phase: Sprint 1 Vercel preview preparation
-
-Execution mode: Paper trading scaffold with mock data
-
-Trading mode: Real trading disabled until later approval
