@@ -8,21 +8,40 @@ Polymarket Radar MVP
 
 ## Mission
 
-Find high-performing Polymarket traders, track their wallets, simulate copy trading with virtual capital, and only later consider small live copy trading after validation and approval.
+The project exists to find high-win-rate, positive expected value Polymarket copy-trading opportunities under strict risk controls.
 
-## Current Sprint
+Research, dashboards, wallet analytics, and AI scoring are tools. The goal is profitable, repeatable, risk-controlled copy trading. The system should eventually follow only high-quality trades, not blindly copy every trade from any wallet.
 
-Sprint 1: Mobile Dashboard MVP
+## Current Production State
 
-Current state:
+```text
+MVP v0.1: Vercel Production Ready
+Stack: Next.js 14 + React 18
+Active path: pages/ + pages/api/
+Data: mock only
+Trading: disabled
+```
 
-- TypeScript API scaffold exists.
-- Mock trader data exists.
-- Paper-trading simulator scaffold exists.
-- Static dashboard HTML exists but CSS and JavaScript are incomplete.
-- No deployed URL exists yet.
+The mobile dashboard is live and deployable. Current visible trader names, scores, and paper signals are placeholders.
 
-## Never Do During Phase 1 and Phase 2
+## Active Architecture
+
+Use this as the current source of truth:
+
+```text
+pages/index.js        Dashboard page
+pages/_app.js         App wrapper
+styles/globals.css    Dashboard styles
+pages/api/*           Next.js API routes
+package.json          Next.js dependencies and scripts
+next.config.js        Build config
+tsconfig.json         Next.js TypeScript config
+vercel.json           Vercel framework config
+```
+
+Old root `api/` and `public/index.html` were removed or deprecated during deployment repair. Old Express/TypeScript scaffold under `src/` may still exist but is not the current Vercel production path.
+
+## Never Do Until Explicitly Approved
 
 - Do not request or store private keys.
 - Do not require `PROXY_WALLET`.
@@ -31,9 +50,9 @@ Current state:
 - Do not manual sell.
 - Do not approve allowance.
 - Do not move funds.
-- Do not make live trading the default.
+- Do not enable real trading by default.
 
-## Current Safe Defaults
+## Safe Defaults
 
 ```env
 PREVIEW_MODE=true
@@ -43,33 +62,17 @@ PAPER_STARTING_BALANCE_USD=100
 PAPER_TRADING_DAYS=14
 ```
 
-## Important Files
-
-```text
-README.md
-SAFETY.md
-ROADMAP.md
-PROJECT_STATUS.md
-docs/PROGRESS.md
-docs/ARCHITECTURE.md
-docs/DECISIONS.md
-docs/CHANGELOG.md
-docs/UPSTREAM_REVIEW.md
-src/server.ts
-src/config/env.ts
-src/data/mockWallets.ts
-src/simulation/paperTrading.ts
-```
+No environment variables are required for MVP v0.1.
 
 ## Development Workflow
+
+Before changing files, state which files will be changed.
 
 Every development cycle should follow:
 
 ```text
 Plan -> Modify -> Commit -> Update Progress -> Summarize Impact -> Define Next Step
 ```
-
-Before changing files, state which files will be changed.
 
 After changing files, summarize:
 
@@ -78,55 +81,61 @@ After changing files, summarize:
 - Commit SHA / commit message.
 - Next recommended step.
 
-## Architecture Rule
+## Product Priorities
 
-Keep modules replaceable:
+### Story 5: Live Read-Only Data
 
-- Data provider should be replaceable.
-- Paper trading should be separate from execution.
-- Execution should be disabled until Phase 4.
-- Dashboard should not directly depend on any execution logic.
+Replace mock data with read-only Polymarket data. Keep mock fallback until live data is stable.
 
-## Current Technical Direction
-
-Preferred deployment path:
+Suggested implementation:
 
 ```text
-GitHub -> Vercel -> Mobile Dashboard
+lib/polymarket.js
+pages/api/traders.js
+pages/api/trades/recent.js
+pages/api/paper/summary.js
+pages/index.js
 ```
 
-Likely next architectural task:
+Do not add execution logic.
 
-- Finish current static dashboard, or migrate to Next.js for Vercel-first deployment.
+### Story 6: Wallet Radar
 
-## Upstream Repo
+Add wallet input, watchlist, wallet profile, recent activity, and basic observed performance.
 
-Reviewed upstream:
+### Story 7: Paper Trading Ledger
 
-```text
-shmlkv/polymarket-copy-trading-bot
-```
+Record simulated copy trades and calculate simulated ROI, PnL, win rate, and drawdown.
 
-Decision:
+## Scoring Direction
 
-- Use as reference only for now.
-- Do not import wholesale because it contains live trading paths.
+The long-term product should score each trade, not only each wallet.
 
-## Next Best Step
+Core future metrics:
 
-Complete the mobile dashboard files:
+- Trade Score
+- Wallet Score
+- Copyability Score
+- Liquidity Score
+- Delay / Slippage Score
+- Expected Value estimate
+- Risk score
 
-```text
-public/styles.css
-public/app.js
-```
+The system should aim to follow only the best 10% to 20% of candidate trades after paper-trading validation.
 
-Then test:
+## Handoff Read Order
 
-```bash
-npm install
-npm run typecheck
-npm run dev
-```
+1. `README.md`
+2. `AI_CONTEXT.md`
+3. `docs/PROGRESS.md`
+4. `docs/DATA_SOURCES.md`
+5. `docs/TRADER_REGISTRY.md`
+6. `docs/OPEN_SOURCE_REVIEW.md`
+7. `pages/index.js`
+8. `pages/api/*`
 
-After that, deploy a first preview to Vercel.
+## Current Next Best Step
+
+Start Story 5: add a small read-only Polymarket data helper and replace one mock endpoint at a time.
+
+Do not refactor the whole app. Do not beautify UI first. Do not add trading execution.
