@@ -116,18 +116,18 @@ export default function Home() {
   return (
     <main className="page">
       <section className="hero">
-        <div className="badge">MVP v0.2 · Wallet Radar · 僅監看</div>
+        <div className="badge">MVP v0.3 · Username Resolver · 僅監看</div>
         <h1>Polymarket Radar</h1>
-        <p>先用只讀資料查詢 Wallet 活動，之後再加入 ROI、勝率、模擬跟單與 AI 跟單評分。</p>
+        <p>先嘗試把 Polymarket 使用者解析成 wallet，再讀取只讀活動資料。解析不到也不會中斷首頁。</p>
       </section>
 
       <section className="section validationCard">
         <span className="label">本版驗證重點</span>
-        <h2>請測 Wallet 搜尋</h2>
+        <h2>請測 Username 解析</h2>
         <ul className="checklist">
-          <li>輸入 Polymarket 使用者或 wallet 後是否能查詢</li>
-          <li>查詢失敗時首頁不能壞掉</li>
-          <li>是否能顯示近期活動筆數與成交量</li>
+          <li>輸入 @mepp 不應出現 400 錯誤</li>
+          <li>如果解析到 wallet，應顯示 resolved address</li>
+          <li>如果解析不到，應顯示待解析而不是壞掉</li>
           <li>市場雷達連結仍可正確開到 Polymarket</li>
         </ul>
       </section>
@@ -139,7 +139,7 @@ export default function Home() {
           <input
             value={walletInput}
             onChange={(event) => setWalletInput(event.target.value)}
-            placeholder="輸入 @mepp 或 wallet 地址"
+            placeholder="輸入 @mepp 或 0x wallet 地址"
           />
           <button type="submit" disabled={walletLoading}>{walletLoading ? '查詢中' : '查詢'}</button>
         </form>
@@ -149,6 +149,13 @@ export default function Home() {
               <small>查詢目標</small>
               <strong>{wallet.address}</strong>
             </div>
+            {wallet.resolvedAddress && (
+              <div className="resolvedBox">
+                <small>Resolved Wallet</small>
+                <strong>{wallet.resolvedAddress}</strong>
+              </div>
+            )}
+            {wallet.pendingResolution && <p className="errorText">Username 已連到個人頁，但尚未解析出 wallet address。</p>}
             <div className="walletStats">
               <div><span>{wallet.tradeCount || 0}</span><small>近期活動</small></div>
               <div><span>{formatUsd(wallet.totalVolume)}</span><small>估算成交量</small></div>
