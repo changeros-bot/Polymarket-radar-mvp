@@ -36,6 +36,21 @@ const formatUsd = (value) => {
   return `$${Math.round(amount).toLocaleString()}`;
 };
 
+const formatActivitySize = (value) => {
+  if (value === null || value === undefined) return '未知金額';
+  return formatUsd(value);
+};
+
+const formatActivityTime = (value) => {
+  if (!value) return '時間未知';
+  try {
+    const date = typeof value === 'number' ? new Date(value * 1000) : new Date(value);
+    return date.toLocaleString('zh-TW', { hour12: false });
+  } catch (_error) {
+    return String(value);
+  }
+};
+
 export default function Home() {
   const [traders, setTraders] = useState(emptyPayload);
   const [signals, setSignals] = useState(emptyPayload);
@@ -112,22 +127,23 @@ export default function Home() {
   };
 
   const wallet = walletResult?.wallet;
+  const recentItems = wallet?.recentItems || [];
 
   return (
     <main className="page">
       <section className="hero">
-        <div className="badge">MVP v0.3 · Username Resolver · 僅監看</div>
+        <div className="badge">MVP v0.4.2 · Wallet Activity · 僅監看</div>
         <h1>Polymarket Radar</h1>
-        <p>先嘗試把 Polymarket 使用者解析成 wallet，再讀取只讀活動資料。解析不到也不會中斷首頁。</p>
+        <p>先把已解析的 wallet 活動列出來，確認資料鏈可用，再開始計算 ROI、勝率與 Copy Score。</p>
       </section>
 
       <section className="section validationCard">
         <span className="label">本版驗證重點</span>
-        <h2>請測 Username 解析</h2>
+        <h2>請測 Wallet 活動</h2>
         <ul className="checklist">
-          <li>輸入 @mepp 不應出現 400 錯誤</li>
-          <li>如果解析到 wallet，應顯示 resolved address</li>
-          <li>如果解析不到，應顯示待解析而不是壞掉</li>
+          <li>輸入 @mepp 應顯示 resolved wallet</li>
+          <li>應顯示近期活動筆數與估算成交量</li>
+          <li>如果有 activity，應列出最近交易/活動</li>
           <li>市場雷達連結仍可正確開到 Polymarket</li>
         </ul>
       </section>
@@ -162,6 +178,25 @@ export default function Home() {
             </div>
             {wallet.profileUrl && <a className="textLink" href={wallet.profileUrl} target="_blank" rel="noreferrer">開啟 Polymarket 個人頁</a>}
             {walletResult?.error && <p className="errorText">{walletResult.error}</p>}
+            {recentItems.length > 0 && (
+              <div className="activityPanel">
+                <div className="activityHeader">
+                  <strong>最近活動</strong>
+                  <small>只讀資料</small>
+                </div>
+                <div className="activityList">
+                  {recentItems.map((item) => (
+                    <div className="activityItem" key={item.id}>
+                      <div>
+                        <strong>{item.market}</strong>
+                        <small>{item.side} · {formatActivityTime(item.timestamp)}</small>
+                      </div>
+                      <span>{formatActivitySize(item.size)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>
