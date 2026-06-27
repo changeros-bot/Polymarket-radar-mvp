@@ -4,6 +4,50 @@ This document records project progress, decisions, blockers, and handoff notes f
 
 ## 2026-06-27
 
+### Story 5 Live Read-Only Data Progress
+
+Focus: start replacing mock data with read-only Polymarket data while keeping fallback safety.
+
+### Completed
+
+- Added `lib/polymarket.js` as a read-only data helper.
+- Added Gamma API defaults:
+  - `POLYMARKET_GAMMA_API_URL=https://gamma-api.polymarket.com`
+  - `POLYMARKET_DATA_API_URL=https://data-api.polymarket.com`
+- Updated `pages/api/traders.js` to try live Polymarket market data first and fall back to mock data if the API fails.
+- Updated `pages/api/trades/recent.js` to use live market data as read-only recent signals and fall back to mock data if the API fails.
+- Updated `.env.example` with optional read-only data variables.
+
+### Story 5 Task Status
+
+| Task | Status |
+|---|---|
+| Read-only data helper | Done |
+| Live traders endpoint | First pass done |
+| Live recent signals endpoint | First pass done |
+| Paper summary update | Skipped for now |
+| Frontend live/mock badge | Not Started |
+| Vercel verification | Pending |
+
+### Current Blockers / Risks
+
+- Polymarket endpoint response shapes may need adjustment after Vercel runtime verification.
+- `pages/api/paper/summary.js` still uses mock preview data.
+- No wallet-level trader PnL ingestion yet.
+- Current live data uses active market volume as a temporary read-only signal, not true wallet leaderboard data.
+
+### Recommended Next Steps
+
+1. Wait for Vercel deployment from latest commits.
+2. Verify:
+   - `/api/traders`
+   - `/api/trades/recent`
+3. If endpoints fall back to mock, inspect returned `error` field.
+4. Add frontend source badge showing `polymarket-gamma` or `mock-fallback`.
+5. Then add wallet input / watchlist.
+
+---
+
 ### Story 4 Documentation Handoff
 
 Focus: make the repository understandable without reading chat history.
@@ -103,11 +147,10 @@ Trading mode: Real trading disabled
 
 ### Recommended Next Steps
 
-1. Start Story 5: replace mock data with read-only Polymarket data.
-2. Add a small data helper under `lib/`.
-3. Keep mock fallback until live endpoints are stable.
-4. Add wallet input and watchlist after read-only data is working.
-5. Add paper-trading ledger only after wallet activity data is reliable.
+1. Continue Story 5: verify read-only endpoints in Vercel.
+2. Keep mock fallback until live endpoints are stable.
+3. Add wallet input and watchlist after read-only data is working.
+4. Add paper-trading ledger only after wallet activity data is reliable.
 
 ---
 
